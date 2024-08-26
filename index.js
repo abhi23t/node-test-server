@@ -2,6 +2,8 @@ const { Client } = require("@opensearch-project/opensearch");
 const BluebirdPromise = require("bluebird");
 const { AwsSigv4Signer } = require("@opensearch-project/opensearch/aws");
 const express = require("express");
+const bodyParser = require("body-parser");
+
 const { DynamoDB } = require("aws-sdk");
 const webPush = require("web-push");
 const axios = require("axios");
@@ -9,6 +11,7 @@ const https = require("https");
 const fs = require("fs");
 const app = express();
 const port = 5000;
+// app.use(express.bodyParser());
 const data = [
   {
     _index: "casev2",
@@ -5893,11 +5896,11 @@ app.post("/clone", async (req, res) => {
   });
 });
 
-app.post("/listen", async (req, res) => {
-  console.log("listening to DC");
-  Object.keys(req).forEach((k) =>
-    console.log("=====", "\n", "key", k, "\n", req[k], "\n", "=====")
-  );
+app.post("/listen", bodyParser.json(), async (req, res) => {
+  console.log("listening to DC", req.body);
+  // Object.keys(req).forEach((k) =>
+  //   console.log("=====", "\n", "key", k, "\n", req[k], "\n", "=====")
+  // );
 
   res.json({ text: "OK" });
 });
