@@ -5894,6 +5894,7 @@ app.post("/clone", async (req, res) => {
 });
 
 app.post("/listen", async (req, res) => {
-  console.log("listening to DC", typeof req);
+  console.log("listening to DC");
+  Object.keys(req).forEach((k) => console.log("key", k));
   res.json({ text: "OK" });
 });
