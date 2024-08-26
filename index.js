@@ -5894,6 +5894,6 @@ app.post("/clone", async (req, res) => {
 });
 
 app.post("/listen", async (req, res) => {
-  console.log("listening to DC", req);
+  console.log("listening to DC", typeof req);
   res.json({ text: "OK" });
 });
