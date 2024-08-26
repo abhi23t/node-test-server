@@ -5898,6 +5898,7 @@ app.post("/clone", async (req, res) => {
 
 app.post("/listen", bodyParser.json(), async (req, res) => {
   console.log("listening to DC", req.body);
+  console.log("Headers", req.headers);
   // Object.keys(req).forEach((k) =>
   //   console.log("=====", "\n", "key", k, "\n", req[k], "\n", "=====")
   // );
