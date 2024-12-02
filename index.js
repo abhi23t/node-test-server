@@ -3,6 +3,7 @@ const BluebirdPromise = require("bluebird");
 const { AwsSigv4Signer } = require("@opensearch-project/opensearch/aws");
 const express = require("express");
 const bodyParser = require("body-parser");
+const crypto = require("crypto");
 
 const { DynamoDB } = require("aws-sdk");
 const webPush = require("web-push");
@@ -5897,11 +5898,59 @@ app.post("/clone", async (req, res) => {
 });
 
 app.post("/listen", bodyParser.json(), async (req, res) => {
-  console.log("listening to DC", req.body);
-  console.log("Headers", req.headers);
+  // console.log("listening to DC", req.body);
+  // console.log("Headers", req.headers);
+  if (
+    [
+      "InstallCertificateFailed",
+      "UpdateFirmwareFailed",
+      "UpdateFirmwareSuccess",
+    ].includes(req.body.event_id)
+  ) {
+    console.log("******************Start***************************");
+    console.log("Firmware update", req.body);
+    console.log("******************End***************************");
+  } else {
+    console.log("******************Start***************************");
+    console.log("Normal update", req.body);
+    console.log("******************End***************************");
+  }
   // Object.keys(req).forEach((k) =>
   //   console.log("=====", "\n", "key", k, "\n", req[k], "\n", "=====")
   // );
 
   res.json({ text: "OK" });
+});
+
+app.post("/verify-signature", async (req, res) => {
+  console.log("in verify");
+  const payload = JSON.stringify({
+    event_uuid: "f3931eac528240549ef7035d8b21d7b6",
+    event_id: "ApplyDeviceSettingsAccepted",
+    event_type: "Alert",
+    event_description: "Printer has applied settings",
+    subscriber_id: "69d045c95f8247acaa635a396de6d3f6",
+    device_id:
+      "1F141F4C3170C4DB948CCDBC1D47570686AE0968E2A6712A9D17730104AE5A07",
+    device_type: "Brother@@Brother RJ-4250WB_SR1_CR1@@1",
+    timestamp: "2024-09-09T05:20:48.9498043Z",
+  });
+  const receivedSignature = "iPtVnH1ooiR+XpDeWF5dZYRuQxEj8nwGnfKcx3Qh9tQ=";
+  const accessToken = "string";
+  // Step 1: Encode the body (payload) and access token in UTF-8
+  const utf8Body = new TextEncoder().encode(payload);
+  console.log("utfBody", utf8Body);
+  const utf8AccessToken = new TextEncoder().encode(accessToken);
+  console.log("utf8AccessToken", utf8AccessToken);
+
+  // Step 2: Recreate the HMAC SHA256 hash using the access token
+  const hmac = crypto.createHmac("sha256", utf8AccessToken);
+  hmac.update(utf8Body);
+  const hashedData = hmac.digest();
+  console.log("hashedData", hashedData);
+  // Step 3: Convert the hashed data to Base64
+  const generatedSignature = hashedData.toString("base64");
+  console.log("generatedSignature", generatedSignature);
+  // Step 4: Compare the generated signature with the received one
+  return res.json({ verified: generatedSignature === receivedSignature });
 });
