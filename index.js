@@ -5900,9 +5900,7 @@ app.post("/clone", async (req, res) => {
 app.post("/listen", bodyParser.json(), async (req, res) => {
   // console.log("listening to DC", req.body);
   // console.log("Headers", req.headers);
-  if(req.body.event_id === "StatusUpdated"){
-    console.log("*********************************************");
-  }
+  
   if (
     [
       "InstallCertificateFailed",
@@ -5913,6 +5911,8 @@ app.post("/listen", bodyParser.json(), async (req, res) => {
     console.log("******************Start***************************");
     console.log("Firmware update", req.body);
     console.log("******************End***************************");
+  } else if(req.body.event_id === "StatusUpdated"){
+    console.log("*********************************************");
   } else {
     console.log("******************Start***************************");
     console.log("Normal update", req.body);
