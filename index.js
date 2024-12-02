@@ -5900,6 +5900,9 @@ app.post("/clone", async (req, res) => {
 app.post("/listen", bodyParser.json(), async (req, res) => {
   // console.log("listening to DC", req.body);
   // console.log("Headers", req.headers);
+  if(req.body.event_id === "StatusUpdated"){
+    console.log("*********************************************");
+  }
   if (
     [
       "InstallCertificateFailed",
