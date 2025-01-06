@@ -5899,25 +5899,31 @@ app.post("/clone", async (req, res) => {
 
 app.post("/listen", bodyParser.json(), async (req, res) => {
   // console.log("listening to DC", req.body);
-  // console.log("Headers", req.headers);
-  
-  if (
-    [
-      "InstallCertificateFailed",
-      "UpdateFirmwareFailed",
-      "UpdateFirmwareSuccess",
-    ].includes(req.body.event_id)
-  ) {
-    console.log("******************Start***************************");
-    console.log("Firmware update", req.body);
-    console.log("******************End***************************");
-  } else if(req.body.event_id === "StatusUpdated"){
-    console.log("*********************************************");
-  } else {
-    console.log("******************Start***************************");
-    console.log("Normal update", req.body);
-    console.log("******************End***************************");
-  }
+  console.log("validate", validate(req.body, req.headers["x-hook-signature"]));
+
+  // if (
+  //   [
+  //     "InstallCertificateFailed",
+  //     "UpdateFirmwareFailed",
+  //     "UpdateFirmwareSuccess",
+  //   ].includes(req.body.event_id)
+  // ) {
+  //   console.log(
+  //     "******************Start***************************",
+  //     new Date().toLocaleTimeString()
+  //   );
+  //   console.log("Firmware update", req.body);
+  //   console.log(
+  //     "******************End***************************",
+  //     new Date().toLocaleTimeString()
+  //   );
+  //   // } else if(req.body.event_id === "StatusUpdated"){
+  //   // console.log("*********************************************");
+  // } else {
+  console.log(`Start at ${new Date().toLocaleTimeString()}`);
+  console.log("Normal update", req.body);
+  console.log(`End at ${new Date().toLocaleTimeString()}`);
+  // }
   // Object.keys(req).forEach((k) =>
   //   console.log("=====", "\n", "key", k, "\n", req[k], "\n", "=====")
   // );
@@ -5925,6 +5931,26 @@ app.post("/listen", bodyParser.json(), async (req, res) => {
   res.json({ text: "OK" });
 });
 
+function validate(payload, token) {
+  const payloadData = JSON.stringify(payload);
+  const receivedSignature = token;
+  const accessToken = "access_token";
+  // Step 1: Encode the body (payload) and access token in UTF-8
+  const utf8Body = new TextEncoder().encode(payloadData);
+  const utf8AccessToken = new TextEncoder().encode(accessToken);
+
+  // Step 2: Recreate the HMAC SHA256 hash using the access token
+  const hmac = crypto.createHmac("sha256", utf8AccessToken);
+  hmac.update(utf8Body);
+  const hashedData = hmac.digest();
+
+  // Step 3: Convert the hashed data to Base64
+  const generatedSignature = hashedData.toString("base64");
+  console.log("generatedSignature", generatedSignature);
+
+  // Step 4: Compare the generated signature with the received one
+  return generatedSignature === receivedSignature;
+}
 app.post("/verify-signature", async (req, res) => {
   console.log("in verify");
   const payload = JSON.stringify({
