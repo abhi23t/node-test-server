@@ -5897,7 +5897,7 @@ app.post("/clone", async (req, res) => {
   });
 });
 
-app.post("/listen", bodyParser.json(), async (req, res) => {
+app.post("/", bodyParser.json(), async (req, res) => {
   // console.log("listening to DC", req.body);
   console.log("validate", validate(req.body, req.headers["x-hook-signature"]));
 
@@ -5982,4 +5982,11 @@ app.post("/verify-signature", async (req, res) => {
   console.log("generatedSignature", generatedSignature);
   // Step 4: Compare the generated signature with the received one
   return res.json({ verified: generatedSignature === receivedSignature });
+});
+
+app.post("/whatsapp", bodyParser.json(), async (req, res) => {
+  console.log("in coming whatsapp webhook");
+  console.log("request body", req.body);
+  console.log("request header", req.headers);
+  console.log("end of request");
 });
