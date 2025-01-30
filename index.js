@@ -11,7 +11,7 @@ const axios = require("axios");
 const https = require("https");
 const fs = require("fs");
 const app = express();
-const port = 5000;
+const port = 5001;
 // app.use(express.bodyParser());
 const data = [
   {
@@ -5990,4 +5990,11 @@ app.post("/whatsapp", bodyParser.json(), async (req, res) => {
   console.log("request header", req.headers);
   console.log("end of request");
   res.json({ text: "OK" });
+});
+
+app.get("/whatsapp", async (req, res) => {
+  const params = req.query;
+  console.log("params", params);
+
+  res.send(params["hub.challenge"])
 });
