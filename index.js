@@ -5987,6 +5987,9 @@ app.post("/verify-signature", async (req, res) => {
 app.post("/whatsapp", bodyParser.json(), async (req, res) => {
   console.log("in coming whatsapp webhook");
   console.log("request body", req.body);
+  req.body?.entry?.forEach((e) => {
+    e?.changes?.forEach((c) => console.log("change", c));
+  });
   console.log("request header", req.headers);
   console.log("end of request");
   res.json({ text: "OK" });
@@ -5996,5 +5999,5 @@ app.get("/whatsapp", async (req, res) => {
   const params = req.query;
   console.log("params", params);
 
-  res.send(params["hub.challenge"])
+  res.send(params["hub.challenge"]);
 });
