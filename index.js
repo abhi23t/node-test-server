@@ -5989,4 +5989,5 @@ app.post("/whatsapp", bodyParser.json(), async (req, res) => {
   console.log("request body", req.body);
   console.log("request header", req.headers);
   console.log("end of request");
+  res.json({ text: "OK" });
 });
