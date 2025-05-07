@@ -12,11 +12,12 @@
   "dependencies": {
     "@opensearch-project/opensearch": "^2.4.0",
     "aws-sdk": "^2.1484.0",
-    "bluebird": "^3.7.2",
-    "express": "^4.18.2",
-    "web-push": "^3.6.6",
     "axios": "^1.6.5",
-    "body-parser": "1.20.2"
+    "bluebird": "^3.7.2",
+    "body-parser": "1.20.2",
+    "express": "^4.18.2",
+    "uuid": "^11.0.5",
+    "web-push": "^3.6.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
